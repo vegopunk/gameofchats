@@ -14,6 +14,7 @@
 		41A4B8801EBCB9FF00BDBC3C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 41A4B87E1EBCB9FF00BDBC3C /* LaunchScreen.storyboard */; };
 		41A4B88B1EBCB9FF00BDBC3C /* gameofchatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41A4B88A1EBCB9FF00BDBC3C /* gameofchatsTests.swift */; };
 		41A4B8961EBCB9FF00BDBC3C /* gameofchatsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41A4B8951EBCB9FF00BDBC3C /* gameofchatsUITests.swift */; };
+		41A4B8A51EBCBE4D00BDBC3C /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41A4B8A41EBCBE4D00BDBC3C /* LoginController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		41A4B8911EBCB9FF00BDBC3C /* gameofchatsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = gameofchatsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		41A4B8951EBCB9FF00BDBC3C /* gameofchatsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = gameofchatsUITests.swift; sourceTree = "<group>"; };
 		41A4B8971EBCB9FF00BDBC3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		41A4B8A41EBCBE4D00BDBC3C /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,8 +99,8 @@
 		41A4B8741EBCB9FF00BDBC3C /* gameofchats */ = {
 			isa = PBXGroup;
 			children = (
+				41A4B8A31EBCBE0300BDBC3C /* Controller */,
 				41A4B8751EBCB9FF00BDBC3C /* AppDelegate.swift */,
-				41A4B8771EBCB9FF00BDBC3C /* ViewController.swift */,
 				41A4B8791EBCB9FF00BDBC3C /* Main.storyboard */,
 				41A4B87C1EBCB9FF00BDBC3C /* Assets.xcassets */,
 				41A4B87E1EBCB9FF00BDBC3C /* LaunchScreen.storyboard */,
@@ -123,6 +125,15 @@
 				41A4B8971EBCB9FF00BDBC3C /* Info.plist */,
 			);
 			path = gameofchatsUITests;
+			sourceTree = "<group>";
+		};
+		41A4B8A31EBCBE0300BDBC3C /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				41A4B8A41EBCBE4D00BDBC3C /* LoginController.swift */,
+				41A4B8771EBCB9FF00BDBC3C /* ViewController.swift */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,6 +271,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				41A4B8781EBCB9FF00BDBC3C /* ViewController.swift in Sources */,
+				41A4B8A51EBCBE4D00BDBC3C /* LoginController.swift in Sources */,
 				41A4B8761EBCB9FF00BDBC3C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
