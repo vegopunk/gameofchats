@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Firebase
 class LoginController: UIViewController {
 
     
@@ -23,15 +23,58 @@ class LoginController: UIViewController {
     }()
     
     //конструктор кнопки регистрации
-    let loginRegisterButton : UIButton = {
+    lazy var loginRegisterButton : UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
         button.setTitle("Register", for: .normal)
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        //добавляем таргет на кнопку регистрации
+        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
+        
         return button
     }()
+    
+    //селектор для кнопки регистрации
+    func handleRegister() {
+        
+        guard let email = emailTextField.text , let password = passwordTextField.text , let name = nameTextField.text else {
+        print("Form is not valid")
+        return
+        }
+        
+        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: {(user : FIRUser? , error) in
+            if error != nil {
+            print(error!)
+            return
+            }
+            //успешно зарегестрированный пользователь
+            
+            //уникальные идентификатор для каждого пользователя 
+            //сделали для сокращения кода
+            guard let uid = user?.uid else {
+                return
+            }
+            
+            //ссылка на нашу базу данных в firebase
+            let ref = FIRDatabase.database().reference(fromURL: "https://gameofchats-3242d.firebaseio.com/")
+            //добавляется для уникальной записи в базе данных для каждого пользователя
+            let userReference = ref.child("users").child(uid)
+            let values = ["name" : name , "email" : email]
+            userReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
+                if err != nil {
+                print(err!)
+                    return
+                }
+                //пишем о том, что пользователь успешно сохранен в базе данных Firebase
+                print("Saved user successfully into Firebase DB")
+            })
+        })
+    }
+    
+    
     //конструктор поля name в конструкторе
     let nameTextField : UITextField = {
     let tf = UITextField()

@@ -7,11 +7,16 @@
 //
 
 import UIKit
+import Firebase
+
 
 class ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+
+        
        //создание кнопки логаут с указанием селектора
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
     }
