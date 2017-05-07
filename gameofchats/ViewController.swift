@@ -19,10 +19,24 @@ class ViewController: UITableViewController {
         
        //создание кнопки логаут с указанием селектора
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+        
+        //проверка ,что пользователь не авторизован
+        if FIRAuth.auth()?.currentUser?.uid == nil {
+            perform(#selector(handleLogout), with: nil, afterDelay: 0)
+            
+        }
+        
     }
 
     //чтобы не было ошибок пишем функцию для селектора, создавая экземпляр логин котроллера и выполняем презент
     func handleLogout() {
+        
+        do {
+           try FIRAuth.auth()?.signOut()
+        }catch let logoutError{
+        print(logoutError)
+        }
+        
     let loginController = LoginController()
     present(loginController, animated: true, completion: nil)
     

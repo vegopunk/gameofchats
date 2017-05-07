@@ -32,10 +32,38 @@ class LoginController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         //добавляем таргет на кнопку регистрации
-        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleLoginRegister), for: .touchUpInside)
         
         return button
     }()
+    //определяет в какой вкладке мы назодимся 
+    func handleLoginRegister() {
+        if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
+        handleLogin()
+        }else{
+        handleRegister()
+        }
+    }
+    
+    func handleLogin () {
+        
+        guard let email = emailTextField.text , let password = passwordTextField.text  else {
+            print("Form is not valid")
+            return
+        }
+    
+    FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
+        
+        if  error != nil {
+        print(error!)
+            return
+        }
+        
+        //отрабатывает , когда успешно вошел пользователь
+        self.dismiss(animated: true, completion: nil)
+    })
+    }
+    
     
     //селектор для кнопки регистрации
     func handleRegister() {
@@ -68,6 +96,8 @@ class LoginController: UIViewController {
                 print(err!)
                     return
                 }
+                
+                self.dismiss(animated: true, completion: nil)
                 //пишем о том, что пользователь успешно сохранен в базе данных Firebase
                 print("Saved user successfully into Firebase DB")
             })
@@ -125,6 +155,46 @@ class LoginController: UIViewController {
         return imageView
     }()
     
+    lazy var loginRegisterSegmentedControl : UISegmentedControl = {
+        let sc = UISegmentedControl(items: ["Login" , "Register"])
+        sc.translatesAutoresizingMaskIntoConstraints = false
+        sc.tintColor = UIColor.white
+        sc.selectedSegmentIndex = 1
+        sc.addTarget(self, action: #selector(handleLoginRegisterChange), for: .valueChanged)
+        return sc
+    
+    }()
+    
+    func handleLoginRegisterChange () {
+        //меняет название кнопки в соответствии с выбранной вкладкой
+        let title = loginRegisterSegmentedControl.titleForSegment(at: loginRegisterSegmentedControl.selectedSegmentIndex)
+        loginRegisterButton.setTitle(title, for: .normal)
+        
+        //изменение контейнера для полей ввода
+        inputsContainerViewHeightAnchor?.constant = loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 100 : 150
+        
+        //изменение высоты поля name в вкладке Login 
+        nameTextFieldHeightAnchor?.isActive = false
+        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 0 : 1/3)
+        //пришлось вручную убирать placeholder , потому что когда делаем строку = 0 placeholder наполовину вылазит сверху
+        nameTextField.placeholder = loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? "" : "Name"
+
+        nameTextFieldHeightAnchor?.isActive = true
+        
+        //изменение высоты поля email в вкладке Login при переходах между вкладками
+        emailTextFieldHeightAnchor?.isActive = false
+        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 1/2 : 1/3)
+        emailTextFieldHeightAnchor?.isActive = true
+        
+        //изменение высоты поля password в вкладке Login при переходах между вкладками
+        passwordTextFieldHeightAnchor?.isActive = false
+        passwordTextFieldHeightAnchor = passwordTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 1/2 : 1/3)
+        passwordTextFieldHeightAnchor?.isActive = true
+        
+        
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //цвет бекграунда логин контроллера
@@ -133,11 +203,26 @@ class LoginController: UIViewController {
         view.addSubview(inputsContainerView)
         view.addSubview(loginRegisterButton)
         view.addSubview(profileImageView)
+        view.addSubview(loginRegisterSegmentedControl)
         
         setupInputsContainerView()
         setupLoginRegisterButton()
         setupProfileImageView()
+        setupLoginRegisterSegmentedControl()
         
+        
+    }
+    
+    
+    func setupLoginRegisterSegmentedControl() {
+    //нужные данные для создания полей x ,y, width , height  , constraints
+        
+        //выставляем по центру
+        loginRegisterSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        //привязываем по высоте
+        loginRegisterSegmentedControl.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -12).isActive = true
+        loginRegisterSegmentedControl.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor , multiplier : 1).isActive = true
+        loginRegisterSegmentedControl.heightAnchor.constraint(equalToConstant: 36).isActive = true
         
     }
     
@@ -145,12 +230,19 @@ class LoginController: UIViewController {
         
         //нужные данные для создания полей x ,y, width , height  , constraints
         profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        profileImageView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -12).isActive = true
+        //картинка ставится всегда выше чем лог/рег
+        profileImageView.bottomAnchor.constraint(equalTo: loginRegisterSegmentedControl.topAnchor, constant: -12).isActive = true
+        
         profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         
         
     }
+    
+    var inputsContainerViewHeightAnchor : NSLayoutConstraint?
+    var nameTextFieldHeightAnchor : NSLayoutConstraint?
+    var emailTextFieldHeightAnchor : NSLayoutConstraint?
+    var passwordTextFieldHeightAnchor : NSLayoutConstraint?
     
     func setupInputsContainerView(){
         //нужные данные для создания полей x ,y, width , height  , constraints
@@ -163,7 +255,8 @@ class LoginController: UIViewController {
         inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
         
         //сделали высоту трех полей ввода
-        inputsContainerView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        inputsContainerViewHeightAnchor = inputsContainerView.heightAnchor.constraint(equalToConstant: 150)
+        inputsContainerViewHeightAnchor?.isActive = true
         
         //добавляем поле name в контейнер
         inputsContainerView.addSubview(nameTextField)
@@ -184,8 +277,12 @@ class LoginController: UIViewController {
         nameTextField.topAnchor.constraint(equalTo: inputsContainerView.topAnchor).isActive = true
         //по ширине
         nameTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
+        //сделали контроль над отображением поля ввода name
+        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3)
+        nameTextFieldHeightAnchor?.isActive = true
         
-        nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3).isActive = true
+        
+        
         
         //нужные данные для создания полей x ,y, width , height  , constraints
         
@@ -205,7 +302,10 @@ class LoginController: UIViewController {
         //по ширине
         emailTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
         
-        emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3).isActive = true
+        
+        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3)
+        
+        emailTextFieldHeightAnchor?.isActive = true
         
         //нужные данные для создания полей x ,y, width , height  , constraints
         
@@ -224,7 +324,10 @@ class LoginController: UIViewController {
         //по ширине
         passwordTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
         
-        passwordTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3).isActive = true
+        
+        passwordTextFieldHeightAnchor = passwordTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3)
+        
+        passwordTextFieldHeightAnchor?.isActive = true
         
         
     }
