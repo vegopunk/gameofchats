@@ -65,46 +65,6 @@ class LoginController: UIViewController {
     }
     
     
-    //селектор для кнопки регистрации
-    func handleRegister() {
-        
-        guard let email = emailTextField.text , let password = passwordTextField.text , let name = nameTextField.text else {
-        print("Form is not valid")
-        return
-        }
-        
-        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: {(user : FIRUser? , error) in
-            if error != nil {
-            print(error!)
-            return
-            }
-            //успешно зарегестрированный пользователь
-            
-            //уникальные идентификатор для каждого пользователя 
-            //сделали для сокращения кода
-            guard let uid = user?.uid else {
-                return
-            }
-            
-            //ссылка на нашу базу данных в firebase
-            let ref = FIRDatabase.database().reference(fromURL: "https://gameofchats-3242d.firebaseio.com/")
-            //добавляется для уникальной записи в базе данных для каждого пользователя
-            let userReference = ref.child("users").child(uid)
-            let values = ["name" : name , "email" : email]
-            userReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
-                if err != nil {
-                print(err!)
-                    return
-                }
-                
-                self.dismiss(animated: true, completion: nil)
-                //пишем о том, что пользователь успешно сохранен в базе данных Firebase
-                print("Saved user successfully into Firebase DB")
-            })
-        })
-    }
-    
-    
     //конструктор поля name в конструкторе
     let nameTextField : UITextField = {
     let tf = UITextField()
@@ -147,14 +107,19 @@ class LoginController: UIViewController {
     }()
     
     //конструктор добавления картинки 
-    let profileImageView : UIImageView = {
+    lazy var profileImageView : UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "stark")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
+
+    //создание вскладок login/register
     lazy var loginRegisterSegmentedControl : UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Login" , "Register"])
         sc.translatesAutoresizingMaskIntoConstraints = false

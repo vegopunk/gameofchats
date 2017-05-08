@@ -66,7 +66,7 @@ class NewMessageController: UITableViewController {
         return cell
     }
 }
-//хз для чего это
+//инициализация ячейки юзера
 class UserCell : UITableViewCell {
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
