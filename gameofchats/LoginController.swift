@@ -10,7 +10,6 @@ import UIKit
 import Firebase
 class LoginController: UIViewController {
 
-    
     //создаем контейнер для полей ввода регистрации
     let inputsContainerView : UIView = {
     
@@ -37,7 +36,7 @@ class LoginController: UIViewController {
         return button
     }()
     //определяет в какой вкладке мы назодимся 
-    func handleLoginRegister() {
+    @objc func handleLoginRegister() {
         if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
         handleLogin()
         }else{
@@ -52,7 +51,7 @@ class LoginController: UIViewController {
             return
         }
     
-    FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
+        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
         
         if  error != nil {
         print(error!)
@@ -112,11 +111,20 @@ class LoginController: UIViewController {
         imageView.image = UIImage(named: "stark")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
+    
+    @objc func handleSelectProfileImageView() {
+        let picker = UIImagePickerController()
+        
+        picker.delegate = self
+        //для возможности выбора размера картинки для аватарки
+        picker.allowsEditing = true
+        
+        present(picker, animated: true, completion: nil)
+    }
     
 
     //создание вскладок login/register
@@ -130,7 +138,7 @@ class LoginController: UIViewController {
     
     }()
     
-    func handleLoginRegisterChange () {
+    @objc func handleLoginRegisterChange () {
         //меняет название кнопки в соответствии с выбранной вкладкой
         let title = loginRegisterSegmentedControl.titleForSegment(at: loginRegisterSegmentedControl.selectedSegmentIndex)
         loginRegisterButton.setTitle(title, for: .normal)
