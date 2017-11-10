@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 class LoginController: UIViewController {
+    
+    var messages: MessagesController?
 
     //создаем контейнер для полей ввода регистрации
     let inputsContainerView : UIView = {
@@ -58,6 +60,8 @@ class LoginController: UIViewController {
             return
         }
         
+        self.messages?.fetchUserAndSetupNavBarTitle()
+            
         //отрабатывает , когда успешно вошел пользователь
         self.dismiss(animated: true, completion: nil)
     })

@@ -10,6 +10,9 @@ import UIKit
 import Firebase
 
 extension LoginController : UIImagePickerControllerDelegate , UINavigationControllerDelegate {
+    
+    
+    
     //селектор для кнопки регистрации
     func handleRegister() {
         
@@ -42,9 +45,10 @@ extension LoginController : UIImagePickerControllerDelegate , UINavigationContro
             //уникальное название для всех загружаемых картинок
             let imageName = NSUUID().uuidString
             //ссылка на хранилище firebase
-        let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).png")
+        let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).jpg")
             
-            if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!){
+            if let profileImage = self.profileImageView.image , let uploadData = UIImageJPEGRepresentation(profileImage, 0.1){
+                
             storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                 if error != nil {
                     print(error!)
@@ -73,6 +77,12 @@ extension LoginController : UIImagePickerControllerDelegate , UINavigationContro
                 print(err!)
                 return
             }
+            
+//            self.messages?.fetchUserAndSetupNavBarTitle()
+//            self.messages?.navigationItem.title = values["name"] as? String
+            let user = User()
+            user.setValuesForKeys(values)
+            self.messages?.setupNavBarWithUser(user: user)
             
             self.dismiss(animated: true, completion: nil)
             //пишем о том, что пользователь успешно сохранен в базе данных Firebase
