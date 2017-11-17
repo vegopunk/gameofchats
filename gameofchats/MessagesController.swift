@@ -11,6 +11,8 @@ import Firebase
 
 class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
 
+    let cellId = "cellId"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -21,6 +23,8 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
             UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
 //            UIBarButtonItem(title: "test", style: .plain, target: self, action: #selector(showChatControllerForUser))
         
+        tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
+        
         //создание кнопки новых сообщений
         let image = UIImage(named : "new_msg")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(handleNewMessage))
@@ -30,6 +34,7 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
     }
     
     var messages = [Message]()
+    var messagesDictionary = [String : Message]()
 
     func observeMessages() {
         let ref = Database.database().reference().child("messages")
@@ -37,7 +42,14 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
             if let snapshotValue = snapshot.value as? [String : String] {
                 let message = Message()
                 message.setValuesForKeys(snapshotValue)
-                self.messages.append(message)
+//                self.messages.append(message)
+                if let toId = message.toId {
+                    self.messagesDictionary[toId] = message
+                    self.messages = Array(self.messagesDictionary.values)
+                    self.messages.sort(by: { (message1, message2) -> Bool in
+                        return Int(message1.timestamp!)! > Int(message2.timestamp!)!
+                    })
+                }
                 //без асинхронности будет падать приложение потому что это не основной поток
                 DispatchQueue.main.async(execute: {
                     self.tableView.reloadData()
@@ -52,11 +64,15 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellId")
+//        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellId )
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
         let message = messages[indexPath.row]
-        cell.textLabel?.text = message.toId
-        cell.detailTextLabel?.text = message.text
+        cell.message = message
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 72
     }
     
     @objc func handleNewMessage () {

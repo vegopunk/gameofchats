@@ -68,7 +68,7 @@ extension LoginController : UIImagePickerControllerDelegate , UINavigationContro
     
     func registerUserIntoDatabaseWithUID (uid : String , values : [String : AnyObject]) {
         //ссылка на нашу базу данных в firebase
-        let ref = Database.database().reference(fromURL: "https://gameofchats-3242d.firebaseio.com/")
+        let ref = Database.database().reference()
         //добавляется для уникальной записи в базе данных для каждого пользователя
         let userReference = ref.child("users").child(uid)
         
