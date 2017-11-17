@@ -9,7 +9,6 @@
 import UIKit
 import Firebase
 
-
 class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
 
     override func viewDidLoad() {
@@ -18,26 +17,53 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
 //        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")
         
        //создание кнопки логаут с указанием селектора
-        navigationItem.leftBarButtonItems = [
-            UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout)),
-            UIBarButtonItem(title: "test", style: .plain, target: self, action: #selector(showChatController))
-        
-        ]
+        navigationItem.leftBarButtonItem =
+            UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+//            UIBarButtonItem(title: "test", style: .plain, target: self, action: #selector(showChatControllerForUser))
         
         //создание кнопки новых сообщений
         let image = UIImage(named : "new_msg")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(handleNewMessage))
         
         checkIfUserIsLoggedIn()
-        
+        observeMessages()
     }
+    
+    var messages = [Message]()
 
+    func observeMessages() {
+        let ref = Database.database().reference().child("messages")
+        ref.observe(.childAdded, with: { (snapshot) in
+            if let snapshotValue = snapshot.value as? [String : String] {
+                let message = Message()
+                message.setValuesForKeys(snapshotValue)
+                self.messages.append(message)
+                //без асинхронности будет падать приложение потому что это не основной поток
+                DispatchQueue.main.async(execute: {
+                    self.tableView.reloadData()
+                })
+            }
+        }
+            , withCancel: nil)
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellId")
+        let message = messages[indexPath.row]
+        cell.textLabel?.text = message.toId
+        cell.detailTextLabel?.text = message.text
+        return cell
+    }
     
     @objc func handleNewMessage () {
     let newMessageController = NewMessageController()
+        newMessageController.messangesController = self
         let navController = UINavigationController(rootViewController: newMessageController)
         present(navController, animated: true, completion: nil)
-        
     }
     
     func checkIfUserIsLoggedIn () {
@@ -47,13 +73,12 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
         } else {
             fetchUserAndSetupNavBarTitle()
         }
-
     }
     
     func fetchUserAndSetupNavBarTitle() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            print(snapshot)
+//            print(snapshot)
             if let dictionary = snapshot.value as? [String : AnyObject]{
 //                self.navigationItem.title = dictionary["name"] as? String
                 let user = User()
@@ -109,8 +134,9 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
 //        titleView.addGestureRecognizer(myTapGestureRecogniser)
     }
     
-    @objc func showChatController() {
+    @objc func showChatControllerForUser(user : User) {
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        chatLogController.user = user
         navigationController?.pushViewController(chatLogController, animated: true)
     }
     
