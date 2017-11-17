@@ -112,7 +112,7 @@ class LoginController: UIViewController {
     //конструктор добавления картинки 
     lazy var profileImageView : UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "stark")
+        imageView.image = #imageLiteral(resourceName: "stark")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
@@ -128,6 +128,29 @@ class LoginController: UIViewController {
         picker.allowsEditing = true
         
         present(picker, animated: true, completion: nil)
+    }
+    
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        var selectedImageFromPicker : UIImage?
+        
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            selectedImageFromPicker = editedImage
+        } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            selectedImageFromPicker = originalImage
+        }
+        
+        if let selectedImage = selectedImageFromPicker {
+            profileImageView.image = selectedImage
+        }
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        print("canceled picker")
+        dismiss(animated: true, completion: nil)
     }
     
 
@@ -209,7 +232,6 @@ class LoginController: UIViewController {
         profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         //картинка ставится всегда выше чем лог/рег
         profileImageView.bottomAnchor.constraint(equalTo: loginRegisterSegmentedControl.topAnchor, constant: -12).isActive = true
-        
         profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         

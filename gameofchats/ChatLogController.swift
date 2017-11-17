@@ -9,12 +9,41 @@
 import UIKit
 import Firebase
 
-class ChatLogController : UICollectionViewController, UITextFieldDelegate {
+class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
     
     var user : User? {
         didSet {
             navigationItem.title = user?.name
+            
+            observeMessages()
         }
+    }
+    
+    var messages = [Message]()
+    
+    func observeMessages() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let userMessageRef = Database.database().reference().child("user-messages").child(uid)
+        userMessageRef.observe(.childAdded, with: { (snapshot) in
+            let messageId = snapshot.key
+            let messagesRef = Database.database().reference().child("messages").child(messageId)
+            messagesRef.observe(.value, with: { (snapshot) in
+                
+                guard let dictionary = snapshot.value as? [String : String] else {return}
+                
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+                
+                if message.chatPartnerId() == self.user?.id {
+                    self.messages.append(message)
+                    DispatchQueue.main.async {
+                        self.collectionView?.reloadData()
+                    }
+                }
+            }, withCancel: nil)
+            
+            
+        }, withCancel: nil)
     }
     
     lazy var inputTextField : UITextField = {
@@ -25,16 +54,35 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate {
         return textField
     }()
     
+    let cellId = "cellId"
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView?.alwaysBounceVertical = true
+        collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.backgroundColor = .white
 //        navigationItem.title = "Chat Log Controller"
         setupInputComponents()
     }
     
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+         return messages.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ChatMessageCell
+        let message = messages[indexPath.item]
+        cell.textView.text = message.text
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: 80)
+    }
+    
     func setupInputComponents() {
         let containerView = UIView()
+        containerView.backgroundColor = .white
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
         
