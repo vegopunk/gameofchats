@@ -25,7 +25,7 @@ extension UIImageView {
         URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
             
             if error != nil {
-                print(error)
+                print(error ?? "Error in extension load cache")
                 return
             }
             DispatchQueue.main.async {

@@ -10,15 +10,19 @@ import UIKit
 import Firebase
 
 
-class MessagesController: UITableViewController {
+class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
+//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")
         
        //создание кнопки логаут с указанием селектора
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+        navigationItem.leftBarButtonItems = [
+            UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout)),
+            UIBarButtonItem(title: "test", style: .plain, target: self, action: #selector(showChatController))
+        
+        ]
         
         //создание кнопки новых сообщений
         let image = UIImage(named : "new_msg")
@@ -63,8 +67,8 @@ class MessagesController: UITableViewController {
     func setupNavBarWithUser(user: User) {
         self.navigationItem.title  = user.name
         let titleView = UIView()
+        
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-//        titleView.backgroundColor = UIColor.red
         
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -98,8 +102,16 @@ class MessagesController: UITableViewController {
         containerView.centerXAnchor.constraint(equalTo: titleView.centerXAnchor).isActive = true
         containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
         
-        
         self.navigationItem.titleView = titleView
+        
+        
+//        let myTapGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(showChatController))
+//        titleView.addGestureRecognizer(myTapGestureRecogniser)
+    }
+    
+    @objc func showChatController() {
+        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(chatLogController, animated: true)
     }
     
     //чтобы не было ошибок пишем функцию для селектора, создавая экземпляр логин котроллера и выполняем презент
