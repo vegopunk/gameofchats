@@ -57,8 +57,7 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
         messagesReference.observe(.value, with: { (snapshot) in
             print(snapshot)
             if let dictionary = snapshot.value as? [String : String] {
-                let message = Message()
-                message.setValuesForKeys(dictionary)
+                let message = Message(dictionary : dictionary as [String : AnyObject])
                 if let chatPartnerId = message.chatPartnerId() {
                     self.messagesDictionary[chatPartnerId] = message
                 }
@@ -84,8 +83,12 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
         
         self.messages = Array(self.messagesDictionary.values)
         self.messages.sort(by: { (message1, message2) -> Bool in
-            return Int(message1.timestamp!)! > Int(message2.timestamp!)!
+            guard let message1 = message1.timestamp?.intValue else {return false}
+            guard let message2 = message2.timestamp?.intValue else {return false}
+            return message1 > message2
+
         })
+        
         
         DispatchQueue.main.async {
             self.tableView.reloadData()

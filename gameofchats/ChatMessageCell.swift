@@ -17,6 +17,7 @@ class ChatMessageCell: UICollectionViewCell {
         tv.font = UIFont.systemFont(ofSize: 16)
         tv.backgroundColor = UIColor.clear
         tv.textColor = UIColor.white
+        tv.isEditable = false
         return tv
     }()
     
@@ -46,6 +47,7 @@ class ChatMessageCell: UICollectionViewCell {
         //        imageView.image = #imageLiteral(resourceName: "stark")
         imageView.layer.cornerRadius = 16
         imageView.layer.masksToBounds = true
+        imageView.backgroundColor = .brown
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
