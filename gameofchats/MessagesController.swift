@@ -49,8 +49,8 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
                 if let dictionary = snapshot.value as? [String : String] {
                     let message = Message()
                     message.setValuesForKeys(dictionary)
-                    if let toId = message.toId {
-                        self.messagesDictionary[toId] = message
+                    if let chatPartnerId = message.chatPartnerId() {
+                        self.messagesDictionary[chatPartnerId] = message
                         self.messages = Array(self.messagesDictionary.values)
                         self.messages.sort(by: { (message1, message2) -> Bool in
                             return Int(message1.timestamp!)! > Int(message2.timestamp!)!
