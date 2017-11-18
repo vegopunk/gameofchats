@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-class LoginController: UIViewController {
+class LoginController: UICollectionViewController{
     
     var messages: MessagesController?
 
@@ -198,17 +198,22 @@ class LoginController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         //цвет бекграунда логин контроллера
-        view.backgroundColor = UIColor(r: 61, g: 91, b: 151)
+        collectionView?.backgroundColor = UIColor(r: 61, g: 91, b: 151)
         
-        view.addSubview(inputsContainerView)
-        view.addSubview(loginRegisterButton)
-        view.addSubview(profileImageView)
-        view.addSubview(loginRegisterSegmentedControl)
+        collectionView?.addSubview(inputsContainerView)
+        collectionView?.addSubview(loginRegisterButton)
+        collectionView?.addSubview(profileImageView)
+        collectionView?.addSubview(loginRegisterSegmentedControl)
         
         setupInputsContainerView()
         setupLoginRegisterButton()
         setupProfileImageView()
         setupLoginRegisterSegmentedControl()
+        
+        //чтобы можно было прокурчивать список
+        collectionView?.alwaysBounceVertical = true
+        //убирает клавиатуру при свайпе вниз
+        collectionView?.keyboardDismissMode = .onDrag
         
         
     }
@@ -351,7 +356,10 @@ class LoginController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-
+    
+    
+    
+    
 }
 //создаем расширение (шаблон) для всех цветов , чтобы было проще создавать другие цвета
 extension UIColor {
