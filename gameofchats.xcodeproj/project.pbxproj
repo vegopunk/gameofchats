@@ -26,6 +26,7 @@
 		41D3A6301EC0B95000D6EDE6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D3A62F1EC0B95000D6EDE6 /* User.swift */; };
 		41D99C001FB8F2E3007BEA2A /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D99BFF1FB8F2E3007BEA2A /* ChatLogController.swift */; };
 		41E6F8081FBECDC60084F2C8 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E6F8071FBECDC60084F2C8 /* Message.swift */; };
+		41F7034B1FC2061D009E255E /* InputContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F7034A1FC2061D009E255E /* InputContainerView.swift */; };
 		A6A81ADD1AC266153AC1F572 /* Pods_gameofchats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12143FC0E02DA1CC127EE521 /* Pods_gameofchats.framework */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +74,7 @@
 		41D3A62F1EC0B95000D6EDE6 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		41D99BFF1FB8F2E3007BEA2A /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 		41E6F8071FBECDC60084F2C8 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		41F7034A1FC2061D009E255E /* InputContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputContainerView.swift; sourceTree = "<group>"; };
 		70B2141347F84E5D0CD2C01C /* Pods-gameofchatsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gameofchatsTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gameofchatsTests/Pods-gameofchatsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		714925379771DA4FEBAF12AB /* Pods-gameofchatsUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gameofchatsUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gameofchatsUITests/Pods-gameofchatsUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		86FE97A99A526A0B88454A44 /* Pods-gameofchatsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gameofchatsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-gameofchatsTests/Pods-gameofchatsTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 			children = (
 				416C79351FBEE7BB004E5B48 /* UserCell.swift */,
 				416C79371FBF46F2004E5B48 /* ChatMessageCell.swift */,
+				41F7034A1FC2061D009E255E /* InputContainerView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -532,6 +535,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				41D99C001FB8F2E3007BEA2A /* ChatLogController.swift in Sources */,
+				41F7034B1FC2061D009E255E /* InputContainerView.swift in Sources */,
 				41C862CA1EC2157F00FB9C03 /* AppDelegate.swift in Sources */,
 				41D3A62D1EC0AE7300D6EDE6 /* NewMessageController.swift in Sources */,
 				41E6F8081FBECDC60084F2C8 /* Message.swift in Sources */,
