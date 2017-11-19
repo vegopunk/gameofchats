@@ -31,6 +31,33 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
         
         checkIfUserIsLoggedIn()
 //        observeMessages()
+        
+        tableView.allowsMultipleSelectionDuringEditing = true
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        
+        let message = self.messages[indexPath.row]
+        
+        if let chatPartnerId = message.chatPartnerId() {
+            Database.database().reference().child("user-messages").child(uid).child(chatPartnerId).removeValue(completionBlock: { (error, ref) in
+                if error != nil {
+                    print("Failed to delete message:" , error as Any)
+                    return
+                }
+                self.messagesDictionary.removeValue(forKey: chatPartnerId)
+                self.attemptReloadOfTable()
+                //не самый безопасный способ удалять и обновлять
+//                self.messages.remove(at: indexPath.row)
+//                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            })
+        }
     }
     
     var messages = [Message]()
@@ -48,6 +75,14 @@ class MessagesController: UITableViewController,UIGestureRecognizerDelegate {
                 
             }, withCancel: nil) 
         }, withCancel: nil)
+        
+        ref.observe(.childRemoved, with: { (snapshot) in
+             print(snapshot.key)
+            print(self.messagesDictionary)
+            self.messagesDictionary.removeValue(forKey: snapshot.key)
+            self.attemptReloadOfTable()
+        }, withCancel: nil)
+        
     }
     
     private func fetchMessageWithMessageId(messageId : String) {

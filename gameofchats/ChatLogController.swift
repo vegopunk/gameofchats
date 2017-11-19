@@ -153,7 +153,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let filename = UUID().uuidString + ".mov"
         let uploadTask = Storage.storage().reference().child("message_movies").child(filename).putFile(from: url, metadata: nil, completion: { (metadata, error) in
             if error != nil{
-                print("Failed upload of video: " , error)
+                print("Failed upload of video: " , error as Any)
                 return
             }
             
@@ -221,7 +221,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         if let uploadData = UIImageJPEGRepresentation(image, 0.2){
             ref.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                 if error != nil {
-                    print("Failed to upload image", error)
+                    print("Failed to upload image", error as Any)
                     return
                 }
                 if let imageUrl = metadata?.downloadURL()?.absoluteString {
